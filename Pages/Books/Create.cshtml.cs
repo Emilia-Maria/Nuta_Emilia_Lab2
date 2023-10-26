@@ -27,8 +27,8 @@ namespace Nuta_Emilia_Lab2.Pages.Books
                 FullName = x.LastName + " " + x.FirstName
             });
 
-            ViewData["PublisherID"] = new SelectList(_context.Set<Publisher>(), "ID", "PublisherName");
-            ViewData["AuthorID"] = new SelectList(_context.Set<Author>(), "ID", "FullName");
+            ViewData["AuthorID"] = new SelectList(authorList, "ID", "FullName");
+            ViewData["PublisherID"] = new SelectList(_context.Publisher, "ID", "PublisherName");
 
             var book = new Book();
             book.BookCategories = new List<BookCategory>();

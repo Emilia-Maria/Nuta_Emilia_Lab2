@@ -5,16 +5,16 @@ namespace Nuta_Emilia_Lab2.Models
 {
     public class BookCategoriesPageModel : PageModel
     {
-        public List<AssignedCategoryData> AssignedCategoryDataList;
+        public List<AssignedCategoryData>? AssignedCategoryDataList;
         public void PopulateAssignedCategoryData(Nuta_Emilia_Lab2Context context, Book book)
         {
             var allCategories = context.Category;
             var bookCategories = new HashSet<int>(book.BookCategories.Select(c => c.CategoryID));
             AssignedCategoryDataList = new List<AssignedCategoryData>();
-
             foreach (var cat in allCategories)
             {
-                AssignedCategoryDataList.Add(new AssignedCategoryData {
+                AssignedCategoryDataList.Add(new AssignedCategoryData
+                {
                     CategoryID = cat.ID,
                     Name = cat.CategoryName,
                     Assigned = bookCategories.Contains(cat.ID)
@@ -28,10 +28,8 @@ namespace Nuta_Emilia_Lab2.Models
                 bookToUpdate.BookCategories = new List<BookCategory>();
                 return;
             }
-
             var selectedCategoriesHS = new HashSet<string>(selectedCategories);
             var bookCategories = new HashSet<int>(bookToUpdate.BookCategories.Select(c => c.Category.ID));
-
             foreach (var cat in context.Category)
             {
                 if (selectedCategoriesHS.Contains(cat.ID.ToString()))
@@ -44,17 +42,18 @@ namespace Nuta_Emilia_Lab2.Models
                             CategoryID = cat.ID
                         });
                     }
-                } 
+                }
                 else
                 {
                     if (bookCategories.Contains(cat.ID))
                     {
-                        BookCategory courseToRemove = bookToUpdate.BookCategories.SingleOrDefault(i => i.CategoryID == cat.ID);
-                        context.Remove(courseToRemove);
+                        BookCategory courseToRemove = bookToUpdate
+                            .BookCategories
+                            .SingleOrDefault(i => i.CategoryID == cat.ID);
+                            context.Remove(courseToRemove);
                     }
                 }
             }
         }
-
     }
 }

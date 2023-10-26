@@ -30,7 +30,6 @@ namespace Nuta_Emilia_Lab2.Pages.Books
                 return NotFound();
             }
 
-            // var book =  await _context.Book.FirstOrDefaultAsync(m => m.ID == id);
 
             Book = await _context.Book
                 .Include(b => b.Publisher)
@@ -51,10 +50,8 @@ namespace Nuta_Emilia_Lab2.Pages.Books
                 x.ID,
                 FullName = x.LastName + " " + x.FirstName
             });
-            ViewData["AuthorID"] = new SelectList(_context.Set<Author>(), "ID", "FullName");
-
-            //Book = book;
-            ViewData["PublisherID"] = new SelectList(_context.Set<Publisher>(), "ID", "PublisherName");
+            ViewData["AuthorID"] = new SelectList(authorList, "ID", "FullName");
+            ViewData["PublisherID"] = new SelectList(_context.Publisher, "ID", "PublisherName");
             return Page();
         }
 
@@ -69,6 +66,7 @@ namespace Nuta_Emilia_Lab2.Pages.Books
 
             var bookToUpdate = await _context.Book
                 .Include(i => i.Publisher)
+                .Include(i => i.Author)
                 .Include(i => i.BookCategories).ThenInclude(i => i.Category)
                 .FirstOrDefaultAsync(s => s.ID == id);
 
@@ -94,31 +92,6 @@ namespace Nuta_Emilia_Lab2.Pages.Books
             UpdateBookCategories(_context, selectedCategories, bookToUpdate);
             PopulateAssignedCategoryData(_context, bookToUpdate);
             return Page();
-
-            if (!ModelState.IsValid)
-            {
-                return Page();
-            }
-
-            _context.Attach(Book).State = EntityState.Modified;
-
-            try
-            {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!BookExists(Book.ID))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
-            }
-
-            return RedirectToPage("./Index");
         }
 
         private bool BookExists(int id)
